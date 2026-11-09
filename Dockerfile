@@ -10,7 +10,9 @@ COPY src ./src
 RUN mvn -B -q package
 
 FROM eclipse-temurin:21-jre-alpine
-RUN addgroup -S wcag && adduser -S wcag -G wcag
+# Lettertypen: POI gebruikt hier en daar java.awt (kleuren, maten van tekst); zonder lettertypen kan dat op Alpine vastlopen.
+RUN apk add --no-cache fontconfig ttf-dejavu \
+ && addgroup -S wcag && adduser -S wcag -G wcag
 WORKDIR /app
 COPY --from=bouw /bron/target/oa-wcag.jar ./oa-wcag.jar
 USER wcag
